@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurevox Lens - Like Steroids, For Businesses.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: white;
+            width: 100vw;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('/static/polar-lights-5858656.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(2px);
+            z-index: -2;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.4);
+            z-index: -1;
+        }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6, #1e40af, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .morphism-card {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.25), rgba(30, 41, 59, 0.15));
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 4px;
+        }
+        
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .checkbox-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .checkbox-item.selected {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.7);
+        }
+        
+        .cost-display {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .select-all-btn {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .select-all-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+            transform: scale(1.05);
+        }
+
+        .lookup-btn {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .lookup-btn:hover {
+            background: linear-gradient(135deg, #7c3aed, #9333ea);
+            transform: scale(1.05);
+        }
+
+        .facebook-details {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            margin-top: 8px;
+            padding: 16px;
+            display: none;
+        }
+
+        .facebook-details.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .facebook-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: white;
+            font-size: 12px;
+            text-align: right;
+            max-width: 60%;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-screen overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-panel">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-transparent">
+                        <span class="text-white font-bold text-lg">🔍</span>
+                    </div>
+                    <h1 class="text-2xl font-bold">
+                        <span class="gradient-text">Aurevox</span>
+                        <span class="text-white">Lens</span>
+                    </h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="creditDisplay" class="px-4 py-2 rounded-full text-white font-medium glass-panel">
+                        Credits: --
+                    </div>
+                    <div id="userDisplay" class="text-white font-medium">
+                        Welcome, Guest
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="pt-24 pb-12 px-4 w-full">
+        <div class="max-w-7xl mx-auto w-full">
+            <!-- Hero Section -->
+            <div class="text-center mb-8 floating">
+                <h1 class="text-5xl md:text-7xl font-black mb-4">
+                    <span class="gradient-text">Aurevox</span>
+                    <span class="text-white">Lens</span>
+                </h1>
+                <p class="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
+                    
+                </p>
+                <div class="mt-6 w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
+            </div>
+
+            <!-- API Key Section -->
+            <div id="authSection" class="mb-8 w-full max-w-md mx-auto">
+                <div class="morphism-card rounded-2xl p-6 w-full">
+                    <div class="text-center mb-6">
+                        <div class="w-14 h-14 mx-auto mb-3 bg-transparent rounded-xl flex items-center justify-center">
+                            <span class="text-2xl">🔑</span>
+                        </div>
+                        <h2 class="text-2xl font-bold text-white mb-1">Access Portal</h2>
+                        <p class="text-white/70">Enter your API key to begin</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <input 
+                                id="apiKey" 
+                                type="text"
+                                placeholder="Enter your API key"
+                                class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            >
+                        </div>
+                        <button 
+                            id="validateKey" 
+                            class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all"
+                        >
+                            <span class="flex items-center justify-center space-x-2">
+                                <span>Authenticate</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main App Section -->
+            <div id="mainApp" class="hidden w-full">
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 w-full">
+                    <!-- Search Configuration -->
+                    <div class="xl:col-span-2">
+                        <div class="morphism-card rounded-2xl p-6 w-full">
+                            <div class="mb-6">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
+                                        <span class="text-xl">🔎</span>
+                                    </div>
+                                    <h2 class="text-xl font-bold text-white">Search Configuration</h2>
+                                </div>
+                            </div>
+
+                            <div class="space-y-6">
+                                <!-- Basic Search Info -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-white/80 font-medium mb-2">Business Type</label>
+                                        <input 
+                                            id="searchFor" 
+                                            type="text" 
+                                            placeholder="e.g., Digital Marketing Agency"
+                                            class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        >
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-white/80 font-medium mb-2">Location</label>
+                                        <input 
+                                            id="location" 
+                                            type="text" 
+                                            placeholder="e.g., London, UK"
+                                            class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        >
+                                    </div>
+                                </div>
+
+                                <!-- Platforms Selection -->
+                                <div>
+                                    <div class="section-header">
+                                        <label class="text-white/80 font-medium">Select Platforms</label>
+                                        <button class="select-all-btn" onclick="toggleAllPlatforms()">Select All</button>
+                                    </div>
+                                    <div class="checkbox-grid" id="platformsGrid">
+                                        <!-- Platforms will be populated by JavaScript -->
+                                    </div>
+                                </div>
+
+                                <!-- Email Domains Selection -->
+                                <div>
+                                    <div class="section-header">
+                                        <label class="text-white/80 font-medium">Select Email Domains</label>
+                                        <button class="select-all-btn" onclick="toggleAllDomains()">Select All</button>
+                                    </div>
+                                    <div class="checkbox-grid" id="domainsGrid">
+                                        <!-- Domains will be populated by JavaScript -->
+                                    </div>
+                                </div>
+
+                                <!-- Cost Display & Start Button -->
+                                <div class="flex items-center justify-between pt-4 border-t border-white/10">
+                                    <div class="cost-display">
+                                        <span>💳</span>
+                                        <span id="costDisplay">Cost: 0 credits</span>
+                                    </div>
+                                    <button 
+                                        id="startCollection" 
+                                        class="bg-gradient-to-r from-green-500 to-teal-600 text-white font-semibold py-3 px-8 rounded-xl hover:from-green-600 hover:to-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        disabled
+                                    >
+                                        <span id="startButtonText" class="flex items-center justify-center space-x-2">
+                                            <span>Start Collection</span>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Panel -->
+                    <div class="xl:col-span-1">
+                        <div class="morphism-card rounded-2xl p-6 w-full h-full">
+                            <div class="mb-6">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+                                            <span class="text-xl">📧</span>
+                                        </div>
+                                        <h2 class="text-xl font-bold text-white">Results</h2>
+                                    </div>
+                                    <div id="emailCount" class="px-3 py-1 rounded-full text-white font-medium glass-panel">
+                                        0 emails
+                                    </div>
+                                </div>
+                                
+                                <!-- Progress Bar -->
+                                <div id="progressContainer" class="mb-4 hidden">
+                                    <div class="flex items-center justify-between text-sm text-white/70 mb-1">
+                                        <span>Progress</span>
+                                        <span id="progressText">0%</span>
+                                    </div>
+                                    <div class="w-full bg-white/10 rounded-full h-2">
+                                        <div id="progressBar" class="bg-gradient-to-r from-green-500 to-teal-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Email List -->
+                                <div id="emailList" class="space-y-2 h-96 overflow-y-auto custom-scrollbar">
+                                    <div class="text-center text-white/60 py-12">
+                                        <span class="text-4xl">📭</span>
+                                        <p class="mt-2">No emails collected yet</p>
+                                    </div>
+                                </div>
+
+                                <!-- Download Button -->
+                                <div id="downloadSection" class="mt-4 hidden">
+                                    <button 
+                                        id="downloadBtn" 
+                                        class="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white font-semibold py-2 px-4 rounded-lg hover:from-purple-600 hover:to-pink-700 transition-all"
+                                    >
+                                        <span class="flex items-center justify-center space-x-2">
+                                            <span>📥</span>
+                                            <span>Download Results</span>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize GSAP animations
+        gsap.registerPlugin();
+        
+        // Global variables
+        let socket = null;
+        let currentUser = null;
+        let isCollecting = false;
+        let emailCount = 0;
+        let totalQueries = 0;
+        let completedQueries = 0;
+        
+        // Platform and domain data
+        const platforms = [
+            'instagram.com', 'linkedin.com', 'twitter.com', 'facebook.com',
+            'pinterest.com', 'youtube.com', 'reddit.com', 'tiktok.com'
+        ];
+        
+        const emailDomains = [
+            "@gmail.com", "@yahoo.com", "@hotmail.com", "@outlook.com", "@aol.com",
+            "@gmail.co.uk", "@yahoo.co.uk", "@hotmail.co.uk", "@outlook.co.uk", "@aol.co.uk"
+        ];
+        
+        // Collection statistics
+        let collectionStats = {
+            totalEmails: 0,
+            facebookEmails: 0,
+            regularEmails: 0,
+            uniqueDomains: new Set(),
+            startTime: null,
+            endTime: null
+        };
+        
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+            initializeSocket();
+            populatePlatforms();
+            populateDomains();
+            updateCost();
+            addTooltips();
+        });
+
+        function initializeEventListeners() {
+            // API Key validation
+            document.getElementById('validateKey').addEventListener('click', validateApiKey);
+            
+            // Enter key for API validation
+            document.getElementById('apiKey').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    validateApiKey();
+                }
+            });
+
+            // Start collection
+            document.getElementById('startCollection').addEventListener('click', startCollection);
+            
+            // Add event listeners for search form inputs to update cost
+            const searchInput = document.getElementById('searchFor');
+            const locationInput = document.getElementById('location');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', updateCost);
+            }
+            if (locationInput) {
+                locationInput.addEventListener('input', updateCost);
+            }
+        }
+
+        function initializeSocket() {
+            socket = io();
+            
+            socket.on('new_email', function(data) {
+                addEmailToList(data);
+                updateEmailCount();
+                updateCollectionStats(data);
+                handleFacebookEmail(data);
+            });
+
+            socket.on('update_count', function(data) {
+                emailCount = data.count;
+                updateEmailCount();
+                updateProgress();
+            });
+
+            socket.on('query_complete', function(data) {
+                completedQueries++;
+                updateProgress();
+            });
+
+            socket.on('done', function(data) {
+                collectionStats.endTime = Date.now();
+                showDownloadButton(data.download_url);
+                showCollectionSummary();
+                stopCollection();
+                hideProgressBar();
+                showError('Collection completed successfully! 🎉', 'success');
+            });
+
+            socket.on('error', function(data) {
+                showError(data.message || 'An error occurred during collection');
+                stopCollection();
+                hideProgressBar();
+            });
+        }
+
+        function populatePlatforms() {
+            const grid = document.getElementById('platformsGrid');
+            platforms.forEach(platform => {
+                const item = document.createElement('div');
+                item.className = 'checkbox-item';
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" id="platform_${platform}" class="platform-checkbox hidden">
+                        <div class="w-4 h-4 border-2 border-white/30 rounded flex items-center justify-center checkbox-visual">
+                            <div class="w-2 h-2 bg-blue-500 rounded opacity-0 transition-opacity"></div>
+                        </div>
+                        <label for="platform_${platform}" class="text-white font-medium cursor-pointer flex-1">${platform}</label>
+                    </div>
+                `;
+                
+                item.addEventListener('click', function() {
+                    const checkbox = item.querySelector('input');
+                    const visual = item.querySelector('.checkbox-visual div');
+                    checkbox.checked = !checkbox.checked;
+                    
+                    if (checkbox.checked) {
+                        item.classList.add('selected');
+                        visual.style.opacity = '1';
+                    } else {
+                        item.classList.remove('selected');
+                        visual.style.opacity = '0';
+                    }
+                    
+                    updateCost();
+                });
+                
+                grid.appendChild(item);
+            });
+        }
+
+        function populateDomains() {
+            const grid = document.getElementById('domainsGrid');
+            emailDomains.forEach(domain => {
+                const item = document.createElement('div');
+                item.className = 'checkbox-item';
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" id="domain_${domain}" class="domain-checkbox hidden">
+                        <div class="w-4 h-4 border-2 border-white/30 rounded flex items-center justify-center checkbox-visual">
+                            <div class="w-2 h-2 bg-blue-500 rounded opacity-0 transition-opacity"></div>
+                        </div>
+                        <label for="domain_${domain}" class="text-white font-medium cursor-pointer flex-1">${domain}</label>
+                    </div>
+                `;
+                
+                item.addEventListener('click', function() {
+                    const checkbox = item.querySelector('input');
+                    const visual = item.querySelector('.checkbox-visual div');
+                    checkbox.checked = !checkbox.checked;
+                    
+                    if (checkbox.checked) {
+                        item.classList.add('selected');
+                        visual.style.opacity = '1';
+                    } else {
+                        item.classList.remove('selected');
+                        visual.style.opacity = '0';
+                    }
+                    
+                    updateCost();
+                });
+                
+                grid.appendChild(item);
+            });
+        }
+
+        function toggleAllPlatforms() {
+            const checkboxes = document.querySelectorAll('.platform-checkbox');
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const shouldCheck = checkedCount < checkboxes.length;
+            
+            checkboxes.forEach(checkbox => {
+                const item = checkbox.closest('.checkbox-item');
+                const visual = item.querySelector('.checkbox-visual div');
+                
+                checkbox.checked = shouldCheck;
+                if (shouldCheck) {
+                    item.classList.add('selected');
+                    visual.style.opacity = '1';
+                } else {
+                    item.classList.remove('selected');
+                    visual.style.opacity = '0';
+                }
+            });
+            
+            updateCost();
+        }
+
+        function toggleAllDomains() {
+            const checkboxes = document.querySelectorAll('.domain-checkbox');
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const shouldCheck = checkedCount < checkboxes.length;
+            
+            checkboxes.forEach(checkbox => {
+                const item = checkbox.closest('.checkbox-item');
+                const visual = item.querySelector('.checkbox-visual div');
+                
+                checkbox.checked = shouldCheck;
+                if (shouldCheck) {
+                    item.classList.add('selected');
+                    visual.style.opacity = '1';
+                } else {
+                    item.classList.remove('selected');
+                    visual.style.opacity = '0';
+                }
+            });
+            
+            updateCost();
+        }
+
+        function updateCost() {
+            const selectedPlatforms = document.querySelectorAll('.platform-checkbox:checked').length;
+            const selectedDomains = document.querySelectorAll('.domain-checkbox:checked').length;
+            const cost = selectedPlatforms * selectedDomains * 10;
+            
+            document.getElementById('costDisplay').textContent = `Cost: ${cost} credits`;
+            
+            const startButton = document.getElementById('startCollection');
+            const hasSelections = selectedPlatforms > 0 && selectedDomains > 0;
+            const hasUserData = document.getElementById('searchFor').value.trim() && document.getElementById('location').value.trim();
+            
+            startButton.disabled = !hasSelections || !hasUserData || isCollecting;
+            
+            if (currentUser && cost > currentUser.credit) {
+                startButton.style.opacity = '0.5';
+                startButton.title = 'Insufficient credits';
+            } else {
+                startButton.style.opacity = '1';
+                startButton.title = '';
+            }
+        }
+
+        async function validateApiKey() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            
+            if (!apiKey) {
+                alert('Please enter an API key');
+                return;
+            }
+
+            const button = document.getElementById('validateKey');
+            button.disabled = true;
+            button.innerHTML = '<span class="flex items-center justify-center space-x-2">Checking...</span>';
+
+            try {
+                const response = await fetch('/check_key', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ key: apiKey })
+                });
+
+                const result = await response.json();
+
+                if (result.valid && !result.expired) {
+                    currentUser = result;
+                    showMainApp();
+                    updateUserDisplay();
+                    updateCost();
+                } else if (result.expired) {
+                    alert('API key has expired');
+                } else {
+                    alert('Invalid API key');
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+            }
+
+            button.disabled = false;
+            button.innerHTML = '<span class="flex items-center justify-center space-x-2">Authenticate</span>';
+        }
+
+        function showMainApp() {
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            
+            gsap.from('#mainApp', {
+                duration: 0.5,
+                opacity: 0,
+                y: 20,
+                ease: 'power2.out'
+            });
+        }
+
+        function updateUserDisplay() {
+            document.getElementById('userDisplay').textContent = `Welcome, ${currentUser.username}`;
+            document.getElementById('creditDisplay').textContent = `Credits: ${currentUser.credit}`;
+        }
+
+        function startCollection() {
+            if (isCollecting) return;
+
+            const searchFor = document.getElementById('searchFor').value.trim();
+            const location = document.getElementById('location').value.trim();
+            
+            if (!searchFor || !location) {
+                alert('Please fill in business type and location');
+                return;
+            }
+
+            const selectedPlatforms = Array.from(document.querySelectorAll('.platform-checkbox:checked'))
+                .map(cb => cb.id.replace('platform_', ''));
+            
+            const selectedDomains = Array.from(document.querySelectorAll('.domain-checkbox:checked'))
+                .map(cb => cb.id.replace('domain_', ''));
+
+            if (selectedPlatforms.length === 0 || selectedDomains.length === 0) {
+                alert('Please select at least one platform and one email domain');
+                return;
+            }
+
+            isCollecting = true;
+            emailCount = 0;
+            completedQueries = 0;
+            totalQueries = selectedPlatforms.length * selectedDomains.length;
+            
+            resetCollectionStats();
+            clearEmailList();
+            showProgressBar();
+            
+            document.getElementById('startCollection').disabled = true;
+            document.getElementById('startButtonText').innerHTML = '<span>Collecting...</span>';
+
+            socket.emit('start_collection', {
+                search_for: searchFor,
+                location: location,
+                sites: selectedPlatforms,
+                domains: selectedDomains,
+                key: document.getElementById('apiKey').value.trim()
+            });
+        }
+
+        function stopCollection() {
+            isCollecting = false;
+            document.getElementById('startCollection').disabled = false;
+            document.getElementById('startButtonText').innerHTML = '<span>Start Collection</span>';
+            updateCost();
+        }
+
+        function addEmailToList(emailData) {
+            const emailList = document.getElementById('emailList');
+            
+            // Remove empty state if it exists
+            const emptyState = emailList.querySelector('.text-center');
+            if (emptyState) {
+                emptyState.remove();
+            }
+
+            const emailItem = document.createElement('div');
+            emailItem.className = 'bg-white/5 rounded-lg p-3 border-l-4 border-blue-500/50';
+            
+            const isFacebook = emailData.is_facebook;
+            const lookupButton = isFacebook ? `<button class="lookup-btn" onclick="lookupFacebookData('${emailData.source}', this)">Lookup</button>` : '';
+            
+            emailItem.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3 flex-1 min-w-0">
+                        <div class="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                            <span>${isFacebook ? '📘' : '📧'}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-white font-medium truncate">${emailData.email}</p>
+                            <p class="text-white/50 text-xs truncate">${new URL(emailData.source).hostname}</p>
+                        </div>
+                    </div>
+                    ${lookupButton}
+                </div>
+                <div class="facebook-details" id="details-${emailData.email.replace('@', '_').replace('.', '_')}">
+                    <!-- Facebook details will be loaded here -->
+                </div>
+            `;
+
+            emailList.appendChild(emailItem);
+            emailList.scrollTop = emailList.scrollHeight;
+            
+            // Add subtle animation
+            gsap.from(emailItem, {
+                duration: 0.3,
+                opacity: 0,
+                x: -20,
+                ease: 'power2.out'
+            });
+        }
+
+        async function lookupFacebookData(facebookUrl, button) {
+            const originalText = button.innerHTML;
+            const detailsId = `details-${facebookUrl.split('/').pop().replace(/[^a-zA-Z0-9]/g, '_')}`;
+            const detailsDiv = document.getElementById(detailsId) || button.closest('.bg-white\\/5').querySelector('.facebook-details');
+            
+            // Toggle if already loaded
+            if (detailsDiv.classList.contains('show')) {
+                detailsDiv.classList.remove('show');
+                button.innerHTML = 'Lookup';
+                return;
+            }
+            
+            button.innerHTML = '...';
+            button.disabled = true;
+
+            try {
+                const response = await fetch('/lookup_facebook', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: facebookUrl })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayFacebookDetails(detailsDiv, data);
+                    detailsDiv.classList.add('show');
+                    button.innerHTML = 'Hide';
+                } else {
+                    showError(data.error || 'Failed to lookup Facebook data');
+                    button.innerHTML = originalText;
+                }
+            } catch (error) {
+                showError('Network error while looking up Facebook data');
+                button.innerHTML = originalText;
+            }
+
+            button.disabled = false;
+        }
+
+        function displayFacebookDetails(detailsDiv, data) {
+            const imageUrl = data.image || 'https://via.placeholder.com/80?text=No+Image';
+            
+            detailsDiv.innerHTML = `
+                <div class="flex space-x-4">
+                    <div class="flex-shrink-0">
+                        <img src="${imageUrl}" alt="Profile" class="facebook-image" onerror="this.src='https://via.placeholder.com/80?text=No+Image'">
+                    </div>
+                    <div class="flex-1 space-y-2">
+                        ${data.name ? `<div class="detail-row"><span class="detail-label">Name:</span><span class="detail-value">${data.name}</span></div>` : ''}
+                        ${data.intro_description ? `<div class="detail-row"><span class="detail-label">Description:</span><span class="detail-value">${data.intro_description}</span></div>` : ''}
+                        ${data.intro_categories ? `<div class="detail-row"><span class="detail-label">Category:</span><span class="detail-value">${data.intro_categories}</span></div>` : ''}
+                        ${data.intro_address ? `<div class="detail-row"><span class="detail-label">Address:</span><span class="detail-value">${data.intro_address}</span></div>` : ''}
+                        ${data.intro_email ? `<div class="detail-row"><span class="detail-label">Contact Email:</span><span class="detail-value">${data.intro_email}</span></div>` : ''}
+                        ${data.intro_phone ? `<div class="detail-row"><span class="detail-label">Phone:</span><span class="detail-value">${data.intro_phone}</span></div>` : ''}
+                        ${data.intro_website ? `<div class="detail-row"><span class="detail-label">Website:</span><span class="detail-value">${data.intro_website}</span></div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateEmailCount() {
+            document.getElementById('emailCount').textContent = `${emailCount} emails`;
+        }
+
+        function showProgressBar() {
+            document.getElementById('progressContainer').classList.remove('hidden');
+        }
+
+        function hideProgressBar() {
+            document.getElementById('progressContainer').classList.add('hidden');
+        }
+
+        function updateProgress() {
+            if (totalQueries > 0) {
+                const progress = Math.round((completedQueries / totalQueries) * 100);
+                document.getElementById('progressBar').style.width = `${progress}%`;
+                document.getElementById('progressText').textContent = `${progress}%`;
+            }
+        }
+
+        function clearEmailList() {
+            const emailList = document.getElementById('emailList');
+            emailList.innerHTML = `
+                <div class="text-center text-white/60 py-12">
+                    <span class="text-4xl">🔍</span>
+                    <p class="mt-2">Collecting emails...</p>
+                    <div class="mt-4">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                    </div>
+                </div>
+            `;
+            emailCount = 0;
+            updateEmailCount();
+            document.getElementById('downloadSection').classList.add('hidden');
+        }
+
+        function showDownloadButton(downloadUrl) {
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.onclick = () => window.open(downloadUrl, '_blank');
+            document.getElementById('downloadSection').classList.remove('hidden');
+        }
+
+        function resetCollectionStats() {
+            collectionStats = {
+                totalEmails: 0,
+                facebookEmails: 0,
+                regularEmails: 0,
+                uniqueDomains: new Set(),
+                startTime: Date.now(),
+                endTime: null
+            };
+        }
+
+        function updateCollectionStats(emailData) {
+            collectionStats.totalEmails++;
+            
+            if (emailData.is_facebook) {
+                collectionStats.facebookEmails++;
+            } else {
+                collectionStats.regularEmails++;
+            }
+            
+            const domain = emailData.email.split('@')[1];
+            if (domain) {
+                collectionStats.uniqueDomains.add(domain);
+            }
+        }
+
+        function showCollectionSummary() {
+            const duration = collectionStats.endTime - collectionStats.startTime;
+            const minutes = Math.floor(duration / 60000);
+            const seconds = Math.floor((duration % 60000) / 1000);
+            
+            const summaryHtml = `
+                <div class="mt-4 p-4 bg-white/10 rounded-lg border border-white/20">
+                    <h3 class="text-white font-bold mb-2">📊 Collection Summary</h3>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-white/80">
+                        <div>Total Emails: <span class="text-white font-medium">${collectionStats.totalEmails}</span></div>
+                        <div>Facebook: <span class="text-white font-medium">${collectionStats.facebookEmails}</span></div>
+                        <div>Regular: <span class="text-white font-medium">${collectionStats.regularEmails}</span></div>
+                        <div>Unique Domains: <span class="text-white font-medium">${collectionStats.uniqueDomains.size}</span></div>
+                        <div class="col-span-2">Duration: <span class="text-white font-medium">${minutes}m ${seconds}s</span></div>
+                    </div>
+                </div>
+            `;
+            
+            const emailList = document.getElementById('emailList');
+            emailList.insertAdjacentHTML('beforeend', summaryHtml);
+        }
+
+        function handleFacebookEmail(emailData) {
+            if (emailData.is_facebook) {
+                console.log('Facebook email detected:', emailData.email);
+            }
+        }
+
+        function showError(message, type = 'error') {
+            const errorContainer = document.createElement('div');
+            errorContainer.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transition-all duration-300 ${
+                type === 'error' ? 'bg-red-500/90' : 
+                type === 'warning' ? 'bg-yellow-500/90' : 
+                'bg-green-500/90'
+            } text-white`;
+            
+            errorContainer.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <span class="text-xl">
+                        ${type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '✅'}
+                    </span>
+                    <div class="flex-1">
+                        <p class="font-medium">${message}</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-white/70 hover:text-white">
+                        ✕
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(errorContainer);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (errorContainer.parentNode) {
+                    errorContainer.remove();
+                }
+            }, 5000);
+        }
+
+        function addTooltips() {
+            const elements = [
+                { id: 'costDisplay', text: 'Cost calculation: Sites × Domains × 10 credits' },
+                { id: 'startCollection', text: 'Ctrl/Cmd + Enter to quick start' },
+                { id: 'emailCount', text: 'Total unique emails found' }
+            ];
+            
+            elements.forEach(({ id, text }) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.title = text;
+                }
+            });
+        }
+
+        function exportEmailsAsJSON() {
+            const emails = [];
+            document.querySelectorAll('#emailList .bg-white\\/5').forEach(item => {
+                const emailText = item.querySelector('.text-white.font-medium')?.textContent;
+                const sourceText = item.querySelector('.text-white\\/50')?.textContent;
+                
+                if (emailText && sourceText) {
+                    emails.push({
+                        email: emailText,
+                        source: sourceText,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+            });
+            
+            const dataStr = JSON.stringify(emails, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `emails_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+        }
+
+        function copyEmailsToClipboard() {
+            const emails = [];
+            document.querySelectorAll('#emailList .bg-white\\/5 .text-white.font-medium').forEach(item => {
+                emails.push(item.textContent);
+            });
+            
+            navigator.clipboard.writeText(emails.join('\n')).then(() => {
+                showError('Emails copied to clipboard! 📋', 'success');
+            }).catch(() => {
+                showError('Failed to copy emails to clipboard', 'error');
+            });
+        }
+
+        function autoSaveProgress() {
+            if (emailCount > 0) {
+                const emails = [];
+                document.querySelectorAll('#emailList .bg-white\\/5').forEach(item => {
+                    const emailText = item.querySelector('.text-white.font-medium')?.textContent;
+                    const sourceText = item.querySelector('.text-white\\/50')?.textContent;
+                    
+                    if (emailText && sourceText) {
+                        emails.push({ email: emailText, source: sourceText });
+                    }
+                });
+                
+                // Store in memory (since localStorage is not available)
+                window.currentSessionEmails = emails;
+                console.log(`Auto-saved ${emails.length} emails to session storage`);
+            }
+        }
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + Enter to start collection
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                if (!isCollecting && !document.getElementById('startCollection').disabled) {
+                    startCollection();
+                }
+            }
+            
+            // Escape to stop collection (if running)
+            if (e.key === 'Escape' && isCollecting) {
+                if (confirm('Are you sure you want to stop the collection?')) {
+                    socket.emit('stop_collection');
+                    stopCollection();
+                    hideProgressBar();
+                }
+            }
+        });
+
+        // Add context menu for export options
+        document.addEventListener('contextmenu', function(e) {
+            if (e.target.closest('#emailList') && emailCount > 0) {
+                e.preventDefault();
+                
+                const contextMenu = document.createElement('div');
+                contextMenu.className = 'fixed bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-2 z-50 min-w-[150px]';
+                contextMenu.style.left = e.pageX + 'px';
+                contextMenu.style.top = e.pageY + 'px';
+                
+                contextMenu.innerHTML = `
+                    <button class="w-full text-left px-3 py-2 text-gray-800 hover:bg-blue-100 rounded" onclick="exportEmailsAsJSON(); this.parentElement.remove()">
+                        📄 Export as JSON
+                    </button>
+                    <button class="w-full text-left px-3 py-2 text-gray-800 hover:bg-blue-100 rounded" onclick="copyEmailsToClipboard(); this.parentElement.remove()">
+                        📋 Copy to Clipboard
+                    </button>
+                `;
+                
+                document.body.appendChild(contextMenu);
+                
+                // Remove context menu when clicking elsewhere
+                setTimeout(() => {
+                    document.addEventListener('click', function removeMenu(e) {
+                        if (!contextMenu.contains(e.target)) {
+                            contextMenu.remove();
+                            document.removeEventListener('click', removeMenu);
+                        }
+                    });
+                }, 100);
+            }
+        });
+
+        // Auto-save every 30 seconds during collection
+        setInterval(() => {
+            if (isCollecting) {
+                autoSaveProgress();
+            }
+        }, 30000);
+
+        // Console logs for debugging and user tips
+        console.log('🚀 Aurevox Lens initialized successfully!');
+        console.log('💡 Tips:');
+        console.log('  • Use Ctrl/Cmd + Enter to quick start collection');
+        console.log('  • Press Escape to stop ongoing collection');
+        console.log('  • Right-click on results for export options');
+        console.log('  • All checkboxes start unchecked as requested');
+        console.log('  • Real-time cost calculation updates automatically');
+        console.log('  • Click "Lookup" on Facebook emails for detailed info');
+    </script>
+</body>
+</html>
