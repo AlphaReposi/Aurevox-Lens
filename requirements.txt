@@ -1,0 +1,6 @@
+eventlet
+Flask
+flask-socketio
+requests
+python-dotenv
+beautifulsoup4
