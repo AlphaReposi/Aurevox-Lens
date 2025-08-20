@@ -119,6 +119,41 @@
             background: rgba(59, 130, 246, 0.2);
             border-color: rgba(59, 130, 246, 0.7);
         }
+
+        .custom-domain-item {
+            background: rgba(147, 51, 234, 0.1);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+        }
+
+        .custom-domain-item:hover {
+            background: rgba(147, 51, 234, 0.2);
+            border-color: rgba(147, 51, 234, 0.5);
+        }
+
+        .custom-domain-item.selected {
+            background: rgba(147, 51, 234, 0.3);
+            border-color: rgba(147, 51, 234, 0.7);
+        }
+
+        .custom-domain-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        .custom-domain-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .custom-domain-input:focus {
+            outline: none;
+            border-color: rgba(147, 51, 234, 0.7);
+            box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
+        }
         
         .cost-display {
             background: linear-gradient(135deg, #059669, #10b981);
@@ -577,6 +612,8 @@
 
         function populateDomains() {
             const grid = document.getElementById('domainsGrid');
+            
+            // Add predefined domains
             emailDomains.forEach(domain => {
                 const item = document.createElement('div');
                 item.className = 'checkbox-item';
@@ -608,6 +645,76 @@
                 
                 grid.appendChild(item);
             });
+
+            // Add custom domain option
+            const customItem = document.createElement('div');
+            customItem.className = 'checkbox-item custom-domain-item';
+            customItem.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <input type="checkbox" id="domain_custom" class="domain-checkbox hidden">
+                    <div class="w-4 h-4 border-2 border-purple-400/50 rounded flex items-center justify-center checkbox-visual">
+                        <div class="w-2 h-2 bg-purple-500 rounded opacity-0 transition-opacity"></div>
+                    </div>
+                    <div class="flex items-center space-x-1 flex-1">
+                        <span class="text-white font-medium">@</span>
+                        <input 
+                            type="text" 
+                            id="customDomainInput"
+                            placeholder="example.com"
+                            class="custom-domain-input flex-1"
+                            onclick="event.stopPropagation()"
+                        >
+                    </div>
+                </div>
+            `;
+            
+            const customDomainInput = customItem.querySelector('#customDomainInput');
+            
+            // Handle custom domain input changes
+            customDomainInput.addEventListener('input', function(e) {
+                e.stopPropagation();
+                const checkbox = customItem.querySelector('input[type="checkbox"]');
+                const visual = customItem.querySelector('.checkbox-visual div');
+                
+                if (this.value.trim()) {
+                    checkbox.checked = true;
+                    customItem.classList.add('selected');
+                    visual.style.opacity = '1';
+                } else {
+                    checkbox.checked = false;
+                    customItem.classList.remove('selected');
+                    visual.style.opacity = '0';
+                }
+                
+                updateCost();
+            });
+            
+            // Handle click on the custom domain item
+            customItem.addEventListener('click', function(e) {
+                if (e.target === customDomainInput) return;
+                
+                const checkbox = customItem.querySelector('input[type="checkbox"]');
+                const visual = customItem.querySelector('.checkbox-visual div');
+                
+                if (!customDomainInput.value.trim()) {
+                    customDomainInput.focus();
+                    return;
+                }
+                
+                checkbox.checked = !checkbox.checked;
+                
+                if (checkbox.checked) {
+                    customItem.classList.add('selected');
+                    visual.style.opacity = '1';
+                } else {
+                    customItem.classList.remove('selected');
+                    visual.style.opacity = '0';
+                }
+                
+                updateCost();
+            });
+            
+            grid.appendChild(customItem);
         }
 
         function toggleAllPlatforms() {
@@ -634,10 +741,12 @@
 
         function toggleAllDomains() {
             const checkboxes = document.querySelectorAll('.domain-checkbox');
-            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-            const shouldCheck = checkedCount < checkboxes.length;
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked && cb.id !== 'domain_custom').length;
+            const shouldCheck = checkedCount < (checkboxes.length - 1); // Exclude custom domain
             
             checkboxes.forEach(checkbox => {
+                if (checkbox.id === 'domain_custom') return; // Skip custom domain
+                
                 const item = checkbox.closest('.checkbox-item');
                 const visual = item.querySelector('.checkbox-visual div');
                 
@@ -656,7 +765,16 @@
 
         function updateCost() {
             const selectedPlatforms = document.querySelectorAll('.platform-checkbox:checked').length;
-            const selectedDomains = document.querySelectorAll('.domain-checkbox:checked').length;
+            let selectedDomains = document.querySelectorAll('.domain-checkbox:checked').length;
+            
+            // Check if custom domain is selected and has value
+            const customDomainCheckbox = document.getElementById('domain_custom');
+            const customDomainInput = document.getElementById('customDomainInput');
+            
+            if (customDomainCheckbox && customDomainCheckbox.checked && !customDomainInput.value.trim()) {
+                selectedDomains--; // Don't count empty custom domain
+            }
+            
             const cost = selectedPlatforms * selectedDomains * 10;
             
             document.getElementById('costDisplay').textContent = `Cost: ${cost} credits`;
@@ -680,7 +798,7 @@
             const apiKey = document.getElementById('apiKey').value.trim();
             
             if (!apiKey) {
-                alert('Please enter an API key');
+                showError('Please enter an API key');
                 return;
             }
 
@@ -704,13 +822,15 @@
                     showMainApp();
                     updateUserDisplay();
                     updateCost();
+                    showError('Authentication successful! 🎉', 'success');
                 } else if (result.expired) {
-                    alert('API key has expired');
+                    showError('API key has expired');
                 } else {
-                    alert('Invalid API key');
+                    showError(result.error || 'Invalid API key');
                 }
             } catch (error) {
-                alert('Connection error. Please try again.');
+                console.error('Validation error:', error);
+                showError('Connection error. Please try again.');
             }
 
             button.disabled = false;
@@ -741,18 +861,31 @@
             const location = document.getElementById('location').value.trim();
             
             if (!searchFor || !location) {
-                alert('Please fill in business type and location');
+                showError('Please fill in business type and location');
                 return;
             }
 
             const selectedPlatforms = Array.from(document.querySelectorAll('.platform-checkbox:checked'))
                 .map(cb => cb.id.replace('platform_', ''));
             
-            const selectedDomains = Array.from(document.querySelectorAll('.domain-checkbox:checked'))
+            let selectedDomains = Array.from(document.querySelectorAll('.domain-checkbox:checked'))
                 .map(cb => cb.id.replace('domain_', ''));
 
+            // Handle custom domain
+            const customDomainInput = document.getElementById('customDomainInput');
+            const customDomainCheckbox = document.getElementById('domain_custom');
+            
+            if (customDomainCheckbox && customDomainCheckbox.checked && customDomainInput.value.trim()) {
+                // Replace 'custom' with the actual custom domain
+                selectedDomains = selectedDomains.filter(domain => domain !== 'custom');
+                selectedDomains.push('@' + customDomainInput.value.trim());
+            } else {
+                // Remove custom if it's selected but has no value
+                selectedDomains = selectedDomains.filter(domain => domain !== 'custom');
+            }
+
             if (selectedPlatforms.length === 0 || selectedDomains.length === 0) {
-                alert('Please select at least one platform and one email domain');
+                showError('Please select at least one platform and one email domain');
                 return;
             }
 
@@ -768,13 +901,20 @@
             document.getElementById('startCollection').disabled = true;
             document.getElementById('startButtonText').innerHTML = '<span>Collecting...</span>';
 
-            socket.emit('start_collection', {
+            const collectionData = {
                 search_for: searchFor,
                 location: location,
                 sites: selectedPlatforms,
                 domains: selectedDomains,
                 key: document.getElementById('apiKey').value.trim()
-            });
+            };
+
+            // Add custom domain if present
+            if (customDomainInput.value.trim()) {
+                collectionData.custom_domain = customDomainInput.value.trim();
+            }
+
+            socket.emit('start_collection', collectionData);
         }
 
         function stopCollection() {
@@ -864,6 +1004,7 @@
                     button.innerHTML = originalText;
                 }
             } catch (error) {
+                console.error('Facebook lookup error:', error);
                 showError('Network error while looking up Facebook data');
                 button.innerHTML = originalText;
             }
@@ -1161,6 +1302,7 @@
         console.log('  • All checkboxes start unchecked as requested');
         console.log('  • Real-time cost calculation updates automatically');
         console.log('  • Click "Lookup" on Facebook emails for detailed info');
+        console.log('  • Add custom domains using the purple-colored custom domain field');
     </script>
 </body>
 </html>
