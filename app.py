@@ -37,6 +37,7 @@ SAVE_DIR = "collected"
 DATA_FILE = "data.json"
 BIN_ID = '680913818960c979a58b8802'  # Replace with your JSON bin ID
 SECRET_KEY = '$2a$10$IdifnmBdofbYRqPOOyN6ruvDS5Dm0idObfpQi5lbgPqxxnWOaw4wm'  # Replace with your JSON bin master key
+GUMROAD_PRODUCT_ID = '5ldD5GrO69z9HuDNM0jG_A=='
 
 # JSONBin API URL
 BASE_URL = f'https://api.jsonbin.io/v3/b/{BIN_ID}'
@@ -80,7 +81,7 @@ def load_data():
             logger.info(f"Successfully loaded {len(data) if isinstance(data, list) else 'unknown'} records")
             return data if isinstance(data, list) else []
         else:
-            logger.error(f"Failed to load data from JSONBin: {response.status_code} - {response.text}")
+            logger.error(f"Failed to load data from JSONBin: {response.status_code}")
             return []
     except Exception as e:
         logger.error(f"Exception in load_data: {str(e)}")
@@ -99,10 +100,64 @@ def save_data_to_jsonbin(data):
             logger.info("Successfully saved data to JSONBin")
             return True
         else:
-            logger.error(f"Failed to save data: {response.status_code} - {response.text}")
+            logger.error(f"Failed to save data: {response.status_code}")
             return False
     except Exception as e:
         logger.error(f"Exception in save_data_to_jsonbin: {str(e)}")
+        logger.error(traceback.format_exc())
+        return False
+
+# ------------------ Gumroad License Verification ------------------
+
+def verify_gumroad_license(key):
+    try:
+        logger.info(f"Verifying Gumroad license for key: {key[:10]}...")
+        r = requests.post('https://api.gumroad.com/v2/licenses/verify', 
+                         data={'product_id': GUMROAD_PRODUCT_ID, 'license_key': key},
+                         timeout=10)
+        
+        response_data = r.json()
+        logger.debug(f"Gumroad response: {response_data}")
+        
+        if response_data.get('success'):
+            logger.info(f"Gumroad license verification successful for key: {key[:10]}...")
+            return True
+        else:
+            logger.warning(f"Gumroad license verification failed for key: {key[:10]}...")
+            return False
+    except Exception as e:
+        logger.error(f"Exception in verify_gumroad_license: {str(e)}")
+        return False
+
+def add_key_to_database(key):
+    try:
+        logger.info(f"Adding new Gumroad key to database: {key[:10]}...")
+        data = load_data()
+        
+        if not isinstance(data, list):
+            data = []
+        
+        # Create new entry with default values
+        new_entry = {
+            "key": key,
+            "username": f"gumroad_user_{key[:8]}",
+            "credit": 1000,  # Default credits for new Gumroad users
+            "expiration_date": None,  # No expiration for Gumroad users
+            "scrapedo_token": "06323a5daf6443fd8d6adeda0fa328b8352cf3ccd1a",  # Default token
+            "source": "gumroad"
+        }
+        
+        data.append(new_entry)
+        success = save_data_to_jsonbin(data)
+        
+        if success:
+            logger.info(f"Successfully added Gumroad key to database: {key[:10]}...")
+        else:
+            logger.error(f"Failed to add Gumroad key to database: {key[:10]}...")
+            
+        return success
+    except Exception as e:
+        logger.error(f"Exception in add_key_to_database: {str(e)}")
         logger.error(traceback.format_exc())
         return False
 
@@ -189,7 +244,7 @@ def get_data_v2(url, token):
         logger.debug(f"Scrape.do response status: {response.status_code}")
         
         if response.status_code != 200:
-            logger.error(f"Scrape.do returned status {response.status_code}: {response.text[:500]}")
+            logger.error(f"Scrape.do returned status {response.status_code}")
         
         return response
     except Exception as e:
@@ -383,7 +438,7 @@ def get_facebook_page_data(fb_url):
         logger.debug(f"Facebook scrape response status: {r.status_code}")
         
         if r.status_code != 200:
-            logger.error(f"Facebook scrape failed: {r.status_code} - {r.text[:500]}")
+            logger.error(f"Facebook scrape failed: {r.status_code}")
             raise Exception(f"Scraping failed with status {r.status_code}")
         
         result = extract_info(r.text)
@@ -427,11 +482,27 @@ def check_key():
             return jsonify({"valid": False, "error": "No key provided"}), 400
             
         logger.debug(f"Checking key: {key[:10]}...")
+        
+        # First check if key exists in database
         entry = get_key_entry(key)
 
+        # If not found in database, try Gumroad verification
         if not entry:
-            logger.warning(f"Invalid key attempted: {key[:10]}...")
-            return jsonify({"valid": False, "error": "Invalid key"})
+            logger.info(f"Key not found in database, checking Gumroad: {key[:10]}...")
+            if verify_gumroad_license(key):
+                # Add key to database
+                if add_key_to_database(key):
+                    # Try to get the entry again
+                    entry = get_key_entry(key)
+                    if not entry:
+                        logger.error("Failed to retrieve newly added Gumroad key")
+                        return jsonify({"valid": False, "error": "Authentication failed"})
+                else:
+                    logger.error("Failed to add Gumroad key to database")
+                    return jsonify({"valid": False, "error": "Authentication failed"})
+            else:
+                logger.warning(f"Invalid key attempted: {key[:10]}...")
+                return jsonify({"valid": False, "error": "Invalid key"})
 
         # Check expiration
         exp = entry.get("expiration_date")
@@ -465,7 +536,7 @@ def check_key():
     except Exception as e:
         logger.error(f"Exception in check_key: {str(e)}")
         logger.error(traceback.format_exc())
-        return jsonify({"valid": False, "error": "Internal server error"}), 500
+        return jsonify({"valid": False, "error": "Authentication failed"}), 500
 
 @app.route("/lookup_facebook", methods=["POST"])
 def lookup_facebook():
@@ -475,7 +546,7 @@ def lookup_facebook():
         
         if not data:
             logger.error("No JSON data provided for Facebook lookup")
-            return jsonify({"error": "No data provided"}), 400
+            return jsonify({"error": "Invalid request"}), 400
             
         url = data.get("url")
         if not url:
@@ -490,20 +561,20 @@ def lookup_facebook():
     except Exception as e:
         logger.error(f"Exception in lookup_facebook: {str(e)}")
         logger.error(traceback.format_exc())
-        return jsonify({"error": f"Facebook lookup failed: {str(e)}"}), 500
+        return jsonify({"error": "Facebook lookup failed"}), 500
 
 @socketio.on("start_collection")
 def handle_start_collection(data):
     try:
         logger.info("=== STARTING EMAIL COLLECTION ===")
-        logger.info(f"Received data: {json.dumps(data, indent=2)}")
+        logger.info(f"Received data keys: {list(data.keys()) if data else 'None'}")
         
         # Validate input data
         required_fields = ["search_for", "location", "sites", "domains", "key"]
         for field in required_fields:
             if field not in data:
-                error_msg = f"Missing required field: {field}"
-                logger.error(error_msg)
+                error_msg = "Missing required information"
+                logger.error(f"Missing required field: {field}")
                 emit("error", {"message": error_msg})
                 return
         
@@ -511,7 +582,15 @@ def handle_start_collection(data):
         location = data["location"]
         sites = data["sites"]
         domains = data["domains"]
+        custom_domain = data.get("custom_domain", "").strip()
         key = data["key"]
+        
+        # Add custom domain to domains list if provided
+        if custom_domain:
+            if not custom_domain.startswith("@"):
+                custom_domain = "@" + custom_domain
+            domains.append(custom_domain)
+            logger.info(f"Added custom domain: {custom_domain}")
         
         logger.info(f"Search params - Business: '{search_for}', Location: '{location}'")
         logger.info(f"Sites: {sites}")
@@ -532,8 +611,8 @@ def handle_start_collection(data):
         logger.info(f"User: {username}, Credits: {user_credits}")
 
         if not user_token:
-            error_msg = "No ScrapeDo token found for this key"
-            logger.error(error_msg)
+            error_msg = "Authentication error"
+            logger.error("No ScrapeDo token found for this key")
             emit("error", {"message": error_msg})
             return
 
@@ -628,7 +707,7 @@ def handle_start_collection(data):
     except Exception as e:
         logger.error(f"CRITICAL ERROR in handle_start_collection: {str(e)}")
         logger.error(traceback.format_exc())
-        emit("error", {"message": f"Collection failed: {str(e)}"})
+        emit("error", {"message": "Collection failed. Please try again."})
 
 # ------------------ Error Handlers ------------------
 @app.route('/assets/<path:filename>')
@@ -639,7 +718,7 @@ def serve_static(filename):
 def handle_exception(e):
     logger.error(f"Unhandled exception: {str(e)}")
     logger.error(traceback.format_exc())
-    return jsonify({"error": "Internal server error"}), 500
+    return jsonify({"error": "An error occurred"}), 500
 
 @socketio.on_error()
 def error_handler(e):
@@ -649,5 +728,4 @@ def error_handler(e):
 # ------------------ Run ------------------
 
 if __name__ == "__main__":
-
     socketio.run(app, host="0.0.0.0", port=5000, debug=True)
