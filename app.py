@@ -603,6 +603,7 @@ def download(filename):
         logger.error(f"Download error for {filename}: {str(e)}")
         return "File not found", 404
 
+from copy import deepcopy
 @app.route("/check_key", methods=["POST"])
 def check_key():
     try:
@@ -622,7 +623,9 @@ def check_key():
         is_valid, user_data, error_message = validate_api_key(key)
         
         if is_valid:
-            return jsonify(user_data)
+            user_data_cpy = deepcopy(user_data)
+            user_data_cpy.pop('scrapedo_token')
+            return jsonify(user_data_cpy)
         else:
             return jsonify({"valid": False, "error": error_message})
         
