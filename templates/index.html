@@ -80,183 +80,22 @@
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
         }
         
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 4px;
-        }
-        
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-        }
-        
-        .checkbox-item {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .error-message {
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            padding: 12px 16px;
             border-radius: 8px;
-            padding: 12px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .checkbox-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(59, 130, 246, 0.5);
-            transform: translateY(-2px);
-        }
-        
-        .checkbox-item.selected {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: rgba(59, 130, 246, 0.7);
-        }
-
-        .custom-domain-item {
-            background: rgba(147, 51, 234, 0.1);
-            border: 1px solid rgba(147, 51, 234, 0.3);
-        }
-
-        .custom-domain-item:hover {
-            background: rgba(147, 51, 234, 0.2);
-            border-color: rgba(147, 51, 234, 0.5);
-        }
-
-        .custom-domain-item.selected {
-            background: rgba(147, 51, 234, 0.3);
-            border-color: rgba(147, 51, 234, 0.7);
-        }
-
-        .custom-domain-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 14px;
-            min-width: 120px;
-        }
-
-        .custom-domain-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .custom-domain-input:focus {
-            outline: none;
-            border-color: rgba(147, 51, 234, 0.7);
-            box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
-        }
-        
-        .cost-display {
-            background: linear-gradient(135deg, #059669, #10b981);
-            color: white;
-            font-weight: bold;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             margin-bottom: 16px;
+            border: 1px solid rgba(220, 38, 38, 0.3);
         }
         
-        .select-all-btn {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .select-all-btn:hover {
-            background: rgba(59, 130, 246, 0.3);
-            transform: scale(1.05);
-        }
-
-        .lookup-btn {
-            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        .success-message {
+            background: rgba(34, 197, 94, 0.9);
             color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .lookup-btn:hover {
-            background: linear-gradient(135deg, #7c3aed, #9333ea);
-            transform: scale(1.05);
-        }
-
-        .facebook-details {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 16px;
             border-radius: 8px;
-            margin-top: 8px;
-            padding: 16px;
-            display: none;
-        }
-
-        .facebook-details.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .facebook-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 4px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .detail-value {
-            color: white;
-            font-size: 12px;
-            text-align: right;
-            max-width: 60%;
-            word-wrap: break-word;
+            margin-bottom: 16px;
+            border: 1px solid rgba(22, 163, 74, 0.3);
         }
     </style>
 </head>
@@ -275,11 +114,8 @@
                     </h1>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div id="creditDisplay" class="px-4 py-2 rounded-full text-white font-medium glass-panel">
-                        Credits: --
-                    </div>
-                    <div id="userDisplay" class="text-white font-medium">
-                        Welcome, Guest
+                    <div class="px-4 py-2 rounded-full text-white font-medium glass-panel">
+                        Authentication Required
                     </div>
                 </div>
             </div>
@@ -296,7 +132,7 @@
                     <span class="text-white">Lens</span>
                 </h1>
                 <p class="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
-                    
+                    AI-powered business intelligence for modern entrepreneurs
                 </p>
                 <div class="mt-6 w-20 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
             </div>
@@ -311,6 +147,16 @@
                         <h2 class="text-2xl font-bold text-white mb-1">Access Portal</h2>
                         <p class="text-white/70">Enter your API key to begin</p>
                     </div>
+                    
+                    <!-- Error Message Display -->
+                    {% if error_message %}
+                    <div class="error-message">
+                        <div class="flex items-center space-x-2">
+                            <span>❌</span>
+                            <span>{{ error_message }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
                     
                     <div class="space-y-4">
                         <div>
@@ -330,140 +176,41 @@
                             </span>
                         </button>
                     </div>
+                    
+                    <!-- Info Section -->
+                    <div class="mt-6 pt-6 border-t border-white/10">
+                        <div class="text-center text-white/60 text-sm">
+                            <p class="mb-2">Don't have an API key?</p>
+                            <p class="text-xs">Contact support for access information</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Main App Section -->
-            <div id="mainApp" class="hidden w-full">
-                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 w-full">
-                    <!-- Search Configuration -->
-                    <div class="xl:col-span-2">
-                        <div class="morphism-card rounded-2xl p-6 w-full">
-                            <div class="mb-6">
-                                <div class="flex items-center space-x-3 mb-3">
-                                    <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center">
-                                        <span class="text-xl">🔎</span>
-                                    </div>
-                                    <h2 class="text-xl font-bold text-white">Search Configuration</h2>
-                                </div>
-                            </div>
-
-                            <div class="space-y-6">
-                                <!-- Basic Search Info -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-white/80 font-medium mb-2">Business Type</label>
-                                        <input 
-                                            id="searchFor" 
-                                            type="text" 
-                                            placeholder="e.g., Digital Marketing Agency"
-                                            class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                        >
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-white/80 font-medium mb-2">Location</label>
-                                        <input 
-                                            id="location" 
-                                            type="text" 
-                                            placeholder="e.g., London, UK"
-                                            class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                        >
-                                    </div>
-                                </div>
-
-                                <!-- Platforms Selection -->
-                                <div>
-                                    <div class="section-header">
-                                        <label class="text-white/80 font-medium">Select Platforms</label>
-                                        <button class="select-all-btn" onclick="toggleAllPlatforms()">Select All</button>
-                                    </div>
-                                    <div class="checkbox-grid" id="platformsGrid">
-                                        <!-- Platforms will be populated by JavaScript -->
-                                    </div>
-                                </div>
-
-                                <!-- Email Domains Selection -->
-                                <div>
-                                    <div class="section-header">
-                                        <label class="text-white/80 font-medium">Select Email Domains</label>
-                                        <button class="select-all-btn" onclick="toggleAllDomains()">Select All</button>
-                                    </div>
-                                    <div class="checkbox-grid" id="domainsGrid">
-                                        <!-- Domains will be populated by JavaScript -->
-                                    </div>
-                                </div>
-
-                                <!-- Cost Display & Start Button -->
-                                <div class="flex items-center justify-between pt-4 border-t border-white/10">
-                                    <div class="cost-display">
-                                        <span>💳</span>
-                                        <span id="costDisplay">Cost: 0 credits</span>
-                                    </div>
-                                    <button 
-                                        id="startCollection" 
-                                        class="bg-gradient-to-r from-green-500 to-teal-600 text-white font-semibold py-3 px-8 rounded-xl hover:from-green-600 hover:to-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                        disabled
-                                    >
-                                        <span id="startButtonText" class="flex items-center justify-center space-x-2">
-                                            <span>Start Collection</span>
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Features Section -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div class="morphism-card rounded-xl p-6 text-center">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <span class="text-xl">🎯</span>
                     </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Targeted Search</h3>
+                    <p class="text-white/70 text-sm">Find business contacts across multiple social platforms with precision targeting</p>
+                </div>
 
-                    <!-- Results Panel -->
-                    <div class="xl:col-span-1">
-                        <div class="morphism-card rounded-2xl p-6 w-full h-full">
-                            <div class="mb-6">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
-                                            <span class="text-xl">📧</span>
-                                        </div>
-                                        <h2 class="text-xl font-bold text-white">Results</h2>
-                                    </div>
-                                    <div id="emailCount" class="px-3 py-1 rounded-full text-white font-medium glass-panel">
-                                        0 emails
-                                    </div>
-                                </div>
-                                
-                                <!-- Progress Bar -->
-                                <div id="progressContainer" class="mb-4 hidden">
-                                    <div class="flex items-center justify-between text-sm text-white/70 mb-1">
-                                        <span>Progress</span>
-                                        <span id="progressText">0%</span>
-                                    </div>
-                                    <div class="w-full bg-white/10 rounded-full h-2">
-                                        <div id="progressBar" class="bg-gradient-to-r from-green-500 to-teal-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Email List -->
-                                <div id="emailList" class="space-y-2 h-96 overflow-y-auto custom-scrollbar">
-                                    <div class="text-center text-white/60 py-12">
-                                        <span class="text-4xl">📭</span>
-                                        <p class="mt-2">No emails collected yet</p>
-                                    </div>
-                                </div>
-
-                                <!-- Download Button -->
-                                <div id="downloadSection" class="mt-4 hidden">
-                                    <button 
-                                        id="downloadBtn" 
-                                        class="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white font-semibold py-2 px-4 rounded-lg hover:from-purple-600 hover:to-pink-700 transition-all"
-                                    >
-                                        <span class="flex items-center justify-center space-x-2">
-                                            <span>📥</span>
-                                            <span>Download Results</span>
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                <div class="morphism-card rounded-xl p-6 text-center">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <span class="text-xl">⚡</span>
                     </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Lightning Fast</h3>
+                    <p class="text-white/70 text-sm">Automated email collection with real-time results and instant downloads</p>
+                </div>
+
+                <div class="morphism-card rounded-xl p-6 text-center">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <span class="text-xl">📊</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Smart Analytics</h3>
+                    <p class="text-white/70 text-sm">Advanced filtering and Facebook page lookup with detailed business insights</p>
                 </div>
             </div>
         </div>
@@ -476,40 +223,16 @@
         // Global variables
         let socket = null;
         let currentUser = null;
-        let isCollecting = false;
-        let emailCount = 0;
-        let totalQueries = 0;
-        let completedQueries = 0;
-        
-        // Platform and domain data
-        const platforms = [
-            'instagram.com', 'linkedin.com', 'twitter.com', 'facebook.com',
-            'pinterest.com', 'youtube.com', 'reddit.com', 'tiktok.com'
-        ];
-        
-        const emailDomains = [
-            "@gmail.com", "@yahoo.com", "@hotmail.com", "@outlook.com", "@aol.com",
-            "@gmail.co.uk", "@yahoo.co.uk", "@hotmail.co.uk", "@outlook.co.uk", "@aol.co.uk"
-        ];
-        
-        // Collection statistics
-        let collectionStats = {
-            totalEmails: 0,
-            facebookEmails: 0,
-            regularEmails: 0,
-            uniqueDomains: new Set(),
-            startTime: null,
-            endTime: null
-        };
         
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
             initializeEventListeners();
             initializeSocket();
-            populatePlatforms();
-            populateDomains();
-            updateCost();
-            addTooltips();
+            
+            // Check for URL parameter error message
+            {% if error_message %}
+            showError("{{ error_message }}", 'error');
+            {% endif %}
         });
 
         function initializeEventListeners() {
@@ -522,276 +245,10 @@
                     validateApiKey();
                 }
             });
-
-            // Start collection
-            document.getElementById('startCollection').addEventListener('click', startCollection);
-            
-            // Add event listeners for search form inputs to update cost
-            const searchInput = document.getElementById('searchFor');
-            const locationInput = document.getElementById('location');
-            
-            if (searchInput) {
-                searchInput.addEventListener('input', updateCost);
-            }
-            if (locationInput) {
-                locationInput.addEventListener('input', updateCost);
-            }
         }
 
         function initializeSocket() {
             socket = io();
-            
-            socket.on('new_email', function(data) {
-                addEmailToList(data);
-                updateEmailCount();
-                updateCollectionStats(data);
-                handleFacebookEmail(data);
-            });
-
-            socket.on('update_count', function(data) {
-                emailCount = data.count;
-                updateEmailCount();
-                updateProgress();
-            });
-
-            socket.on('query_complete', function(data) {
-                completedQueries++;
-                updateProgress();
-            });
-
-            socket.on('done', function(data) {
-                collectionStats.endTime = Date.now();
-                showDownloadButton(data.download_url);
-                showCollectionSummary();
-                stopCollection();
-                hideProgressBar();
-                showError('Collection completed successfully! 🎉', 'success');
-            });
-
-            socket.on('error', function(data) {
-                showError(data.message || 'An error occurred during collection');
-                stopCollection();
-                hideProgressBar();
-            });
-        }
-
-        function populatePlatforms() {
-            const grid = document.getElementById('platformsGrid');
-            platforms.forEach(platform => {
-                const item = document.createElement('div');
-                item.className = 'checkbox-item';
-                item.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <input type="checkbox" id="platform_${platform}" class="platform-checkbox hidden">
-                        <div class="w-4 h-4 border-2 border-white/30 rounded flex items-center justify-center checkbox-visual">
-                            <div class="w-2 h-2 bg-blue-500 rounded opacity-0 transition-opacity"></div>
-                        </div>
-                        <label for="platform_${platform}" class="text-white font-medium cursor-pointer flex-1">${platform}</label>
-                    </div>
-                `;
-                
-                item.addEventListener('click', function() {
-                    const checkbox = item.querySelector('input');
-                    const visual = item.querySelector('.checkbox-visual div');
-                    checkbox.checked = !checkbox.checked;
-                    
-                    if (checkbox.checked) {
-                        item.classList.add('selected');
-                        visual.style.opacity = '1';
-                    } else {
-                        item.classList.remove('selected');
-                        visual.style.opacity = '0';
-                    }
-                    
-                    updateCost();
-                });
-                
-                grid.appendChild(item);
-            });
-        }
-
-        function populateDomains() {
-            const grid = document.getElementById('domainsGrid');
-            
-            // Add predefined domains
-            emailDomains.forEach(domain => {
-                const item = document.createElement('div');
-                item.className = 'checkbox-item';
-                item.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <input type="checkbox" id="domain_${domain}" class="domain-checkbox hidden">
-                        <div class="w-4 h-4 border-2 border-white/30 rounded flex items-center justify-center checkbox-visual">
-                            <div class="w-2 h-2 bg-blue-500 rounded opacity-0 transition-opacity"></div>
-                        </div>
-                        <label for="domain_${domain}" class="text-white font-medium cursor-pointer flex-1">${domain}</label>
-                    </div>
-                `;
-                
-                item.addEventListener('click', function() {
-                    const checkbox = item.querySelector('input');
-                    const visual = item.querySelector('.checkbox-visual div');
-                    checkbox.checked = !checkbox.checked;
-                    
-                    if (checkbox.checked) {
-                        item.classList.add('selected');
-                        visual.style.opacity = '1';
-                    } else {
-                        item.classList.remove('selected');
-                        visual.style.opacity = '0';
-                    }
-                    
-                    updateCost();
-                });
-                
-                grid.appendChild(item);
-            });
-
-            // Add custom domain option
-            const customItem = document.createElement('div');
-            customItem.className = 'checkbox-item custom-domain-item';
-            customItem.innerHTML = `
-                <div class="flex items-center space-x-3">
-                    <input type="checkbox" id="domain_custom" class="domain-checkbox hidden">
-                    <div class="w-4 h-4 border-2 border-purple-400/50 rounded flex items-center justify-center checkbox-visual">
-                        <div class="w-2 h-2 bg-purple-500 rounded opacity-0 transition-opacity"></div>
-                    </div>
-                    <div class="flex items-center space-x-1 flex-1">
-                        <span class="text-white font-medium">@</span>
-                        <input 
-                            type="text" 
-                            id="customDomainInput"
-                            placeholder="example.com"
-                            class="custom-domain-input flex-1"
-                            onclick="event.stopPropagation()"
-                        >
-                    </div>
-                </div>
-            `;
-            
-            const customDomainInput = customItem.querySelector('#customDomainInput');
-            
-            // Handle custom domain input changes
-            customDomainInput.addEventListener('input', function(e) {
-                e.stopPropagation();
-                const checkbox = customItem.querySelector('input[type="checkbox"]');
-                const visual = customItem.querySelector('.checkbox-visual div');
-                
-                if (this.value.trim()) {
-                    checkbox.checked = true;
-                    customItem.classList.add('selected');
-                    visual.style.opacity = '1';
-                } else {
-                    checkbox.checked = false;
-                    customItem.classList.remove('selected');
-                    visual.style.opacity = '0';
-                }
-                
-                updateCost();
-            });
-            
-            // Handle click on the custom domain item
-            customItem.addEventListener('click', function(e) {
-                if (e.target === customDomainInput) return;
-                
-                const checkbox = customItem.querySelector('input[type="checkbox"]');
-                const visual = customItem.querySelector('.checkbox-visual div');
-                
-                if (!customDomainInput.value.trim()) {
-                    customDomainInput.focus();
-                    return;
-                }
-                
-                checkbox.checked = !checkbox.checked;
-                
-                if (checkbox.checked) {
-                    customItem.classList.add('selected');
-                    visual.style.opacity = '1';
-                } else {
-                    customItem.classList.remove('selected');
-                    visual.style.opacity = '0';
-                }
-                
-                updateCost();
-            });
-            
-            grid.appendChild(customItem);
-        }
-
-        function toggleAllPlatforms() {
-            const checkboxes = document.querySelectorAll('.platform-checkbox');
-            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-            const shouldCheck = checkedCount < checkboxes.length;
-            
-            checkboxes.forEach(checkbox => {
-                const item = checkbox.closest('.checkbox-item');
-                const visual = item.querySelector('.checkbox-visual div');
-                
-                checkbox.checked = shouldCheck;
-                if (shouldCheck) {
-                    item.classList.add('selected');
-                    visual.style.opacity = '1';
-                } else {
-                    item.classList.remove('selected');
-                    visual.style.opacity = '0';
-                }
-            });
-            
-            updateCost();
-        }
-
-        function toggleAllDomains() {
-            const checkboxes = document.querySelectorAll('.domain-checkbox');
-            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked && cb.id !== 'domain_custom').length;
-            const shouldCheck = checkedCount < (checkboxes.length - 1); // Exclude custom domain
-            
-            checkboxes.forEach(checkbox => {
-                if (checkbox.id === 'domain_custom') return; // Skip custom domain
-                
-                const item = checkbox.closest('.checkbox-item');
-                const visual = item.querySelector('.checkbox-visual div');
-                
-                checkbox.checked = shouldCheck;
-                if (shouldCheck) {
-                    item.classList.add('selected');
-                    visual.style.opacity = '1';
-                } else {
-                    item.classList.remove('selected');
-                    visual.style.opacity = '0';
-                }
-            });
-            
-            updateCost();
-        }
-
-        function updateCost() {
-            const selectedPlatforms = document.querySelectorAll('.platform-checkbox:checked').length;
-            let selectedDomains = document.querySelectorAll('.domain-checkbox:checked').length;
-            
-            // Check if custom domain is selected and has value
-            const customDomainCheckbox = document.getElementById('domain_custom');
-            const customDomainInput = document.getElementById('customDomainInput');
-            
-            if (customDomainCheckbox && customDomainCheckbox.checked && !customDomainInput.value.trim()) {
-                selectedDomains--; // Don't count empty custom domain
-            }
-            
-            const cost = selectedPlatforms * selectedDomains * 10;
-            
-            document.getElementById('costDisplay').textContent = `Cost: ${cost} credits`;
-            
-            const startButton = document.getElementById('startCollection');
-            const hasSelections = selectedPlatforms > 0 && selectedDomains > 0;
-            const hasUserData = document.getElementById('searchFor').value.trim() && document.getElementById('location').value.trim();
-            
-            startButton.disabled = !hasSelections || !hasUserData || isCollecting;
-            
-            if (currentUser && cost > currentUser.credit) {
-                startButton.style.opacity = '0.5';
-                startButton.title = 'Insufficient credits';
-            } else {
-                startButton.style.opacity = '1';
-                startButton.title = '';
-            }
         }
 
         async function validateApiKey() {
@@ -819,10 +276,8 @@
 
                 if (result.valid && !result.expired) {
                     currentUser = result;
-                    showMainApp();
-                    updateUserDisplay();
-                    updateCost();
-                    showError('Authentication successful! 🎉', 'success');
+                    // Redirect to collection page with key parameter
+                    window.location.href = `/collection?key=${encodeURIComponent(apiKey)}`;
                 } else if (result.expired) {
                     showError('API key has expired');
                 } else {
@@ -835,298 +290,6 @@
 
             button.disabled = false;
             button.innerHTML = '<span class="flex items-center justify-center space-x-2">Authenticate</span>';
-        }
-
-        function showMainApp() {
-            document.getElementById('authSection').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            
-            gsap.from('#mainApp', {
-                duration: 0.5,
-                opacity: 0,
-                y: 20,
-                ease: 'power2.out'
-            });
-        }
-
-        function updateUserDisplay() {
-            document.getElementById('userDisplay').textContent = `Welcome, ${currentUser.username}`;
-            document.getElementById('creditDisplay').textContent = `Credits: ${currentUser.credit}`;
-        }
-
-        function startCollection() {
-            if (isCollecting) return;
-
-            const searchFor = document.getElementById('searchFor').value.trim();
-            const location = document.getElementById('location').value.trim();
-            
-            if (!searchFor || !location) {
-                showError('Please fill in business type and location');
-                return;
-            }
-
-            const selectedPlatforms = Array.from(document.querySelectorAll('.platform-checkbox:checked'))
-                .map(cb => cb.id.replace('platform_', ''));
-            
-            let selectedDomains = Array.from(document.querySelectorAll('.domain-checkbox:checked'))
-                .map(cb => cb.id.replace('domain_', ''));
-
-            // Handle custom domain
-            const customDomainInput = document.getElementById('customDomainInput');
-            const customDomainCheckbox = document.getElementById('domain_custom');
-            
-            if (customDomainCheckbox && customDomainCheckbox.checked && customDomainInput.value.trim()) {
-                // Replace 'custom' with the actual custom domain
-                selectedDomains = selectedDomains.filter(domain => domain !== 'custom');
-                selectedDomains.push('@' + customDomainInput.value.trim());
-            } else {
-                // Remove custom if it's selected but has no value
-                selectedDomains = selectedDomains.filter(domain => domain !== 'custom');
-            }
-
-            if (selectedPlatforms.length === 0 || selectedDomains.length === 0) {
-                showError('Please select at least one platform and one email domain');
-                return;
-            }
-
-            isCollecting = true;
-            emailCount = 0;
-            completedQueries = 0;
-            totalQueries = selectedPlatforms.length * selectedDomains.length;
-            
-            resetCollectionStats();
-            clearEmailList();
-            showProgressBar();
-            
-            document.getElementById('startCollection').disabled = true;
-            document.getElementById('startButtonText').innerHTML = '<span>Collecting...</span>';
-
-            const collectionData = {
-                search_for: searchFor,
-                location: location,
-                sites: selectedPlatforms,
-                domains: selectedDomains,
-                key: document.getElementById('apiKey').value.trim()
-            };
-
-            // Add custom domain if present
-            if (customDomainInput.value.trim()) {
-                collectionData.custom_domain = customDomainInput.value.trim();
-            }
-
-            socket.emit('start_collection', collectionData);
-        }
-
-        function stopCollection() {
-            isCollecting = false;
-            document.getElementById('startCollection').disabled = false;
-            document.getElementById('startButtonText').innerHTML = '<span>Start Collection</span>';
-            updateCost();
-        }
-
-        function addEmailToList(emailData) {
-            const emailList = document.getElementById('emailList');
-            
-            // Remove empty state if it exists
-            const emptyState = emailList.querySelector('.text-center');
-            if (emptyState) {
-                emptyState.remove();
-            }
-
-            const emailItem = document.createElement('div');
-            emailItem.className = 'bg-white/5 rounded-lg p-3 border-l-4 border-blue-500/50';
-            
-            const isFacebook = emailData.is_facebook;
-            const lookupButton = isFacebook ? `<button class="lookup-btn" onclick="lookupFacebookData('${emailData.source}', this)">Lookup</button>` : '';
-            
-            emailItem.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3 flex-1 min-w-0">
-                        <div class="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                            <span>${isFacebook ? '📘' : '📧'}</span>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-white font-medium truncate">${emailData.email}</p>
-                            <p class="text-white/50 text-xs truncate">${new URL(emailData.source).hostname}</p>
-                        </div>
-                    </div>
-                    ${lookupButton}
-                </div>
-                <div class="facebook-details" id="details-${emailData.email.replace('@', '_').replace('.', '_')}">
-                    <!-- Facebook details will be loaded here -->
-                </div>
-            `;
-
-            emailList.appendChild(emailItem);
-            emailList.scrollTop = emailList.scrollHeight;
-            
-            // Add subtle animation
-            gsap.from(emailItem, {
-                duration: 0.3,
-                opacity: 0,
-                x: -20,
-                ease: 'power2.out'
-            });
-        }
-
-        async function lookupFacebookData(facebookUrl, button) {
-            const originalText = button.innerHTML;
-            const detailsId = `details-${facebookUrl.split('/').pop().replace(/[^a-zA-Z0-9]/g, '_')}`;
-            const detailsDiv = document.getElementById(detailsId) || button.closest('.bg-white\\/5').querySelector('.facebook-details');
-            
-            // Toggle if already loaded
-            if (detailsDiv.classList.contains('show')) {
-                detailsDiv.classList.remove('show');
-                button.innerHTML = 'Lookup';
-                return;
-            }
-            
-            button.innerHTML = '...';
-            button.disabled = true;
-
-            try {
-                const response = await fetch('/lookup_facebook', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ url: facebookUrl })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    displayFacebookDetails(detailsDiv, data);
-                    detailsDiv.classList.add('show');
-                    button.innerHTML = 'Hide';
-                } else {
-                    showError(data.error || 'Failed to lookup Facebook data');
-                    button.innerHTML = originalText;
-                }
-            } catch (error) {
-                console.error('Facebook lookup error:', error);
-                showError('Network error while looking up Facebook data');
-                button.innerHTML = originalText;
-            }
-
-            button.disabled = false;
-        }
-
-        function displayFacebookDetails(detailsDiv, data) {
-            const imageUrl = data.image || 'https://via.placeholder.com/80?text=No+Image';
-            
-            detailsDiv.innerHTML = `
-                <div class="flex space-x-4">
-                    <div class="flex-shrink-0">
-                        <img src="${imageUrl}" alt="Profile" class="facebook-image" onerror="this.src='https://via.placeholder.com/80?text=No+Image'">
-                    </div>
-                    <div class="flex-1 space-y-2">
-                        ${data.name ? `<div class="detail-row"><span class="detail-label">Name:</span><span class="detail-value">${data.name}</span></div>` : ''}
-                        ${data.intro_description ? `<div class="detail-row"><span class="detail-label">Description:</span><span class="detail-value">${data.intro_description}</span></div>` : ''}
-                        ${data.intro_categories ? `<div class="detail-row"><span class="detail-label">Category:</span><span class="detail-value">${data.intro_categories}</span></div>` : ''}
-                        ${data.intro_address ? `<div class="detail-row"><span class="detail-label">Address:</span><span class="detail-value">${data.intro_address}</span></div>` : ''}
-                        ${data.intro_email ? `<div class="detail-row"><span class="detail-label">Contact Email:</span><span class="detail-value">${data.intro_email}</span></div>` : ''}
-                        ${data.intro_phone ? `<div class="detail-row"><span class="detail-label">Phone:</span><span class="detail-value">${data.intro_phone}</span></div>` : ''}
-                        ${data.intro_website ? `<div class="detail-row"><span class="detail-label">Website:</span><span class="detail-value">${data.intro_website}</span></div>` : ''}
-                    </div>
-                </div>
-            `;
-        }
-
-        function updateEmailCount() {
-            document.getElementById('emailCount').textContent = `${emailCount} emails`;
-        }
-
-        function showProgressBar() {
-            document.getElementById('progressContainer').classList.remove('hidden');
-        }
-
-        function hideProgressBar() {
-            document.getElementById('progressContainer').classList.add('hidden');
-        }
-
-        function updateProgress() {
-            if (totalQueries > 0) {
-                const progress = Math.round((completedQueries / totalQueries) * 100);
-                document.getElementById('progressBar').style.width = `${progress}%`;
-                document.getElementById('progressText').textContent = `${progress}%`;
-            }
-        }
-
-        function clearEmailList() {
-            const emailList = document.getElementById('emailList');
-            emailList.innerHTML = `
-                <div class="text-center text-white/60 py-12">
-                    <span class="text-4xl">🔍</span>
-                    <p class="mt-2">Collecting emails...</p>
-                    <div class="mt-4">
-                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-                    </div>
-                </div>
-            `;
-            emailCount = 0;
-            updateEmailCount();
-            document.getElementById('downloadSection').classList.add('hidden');
-        }
-
-        function showDownloadButton(downloadUrl) {
-            const downloadBtn = document.getElementById('downloadBtn');
-            downloadBtn.onclick = () => window.open(downloadUrl, '_blank');
-            document.getElementById('downloadSection').classList.remove('hidden');
-        }
-
-        function resetCollectionStats() {
-            collectionStats = {
-                totalEmails: 0,
-                facebookEmails: 0,
-                regularEmails: 0,
-                uniqueDomains: new Set(),
-                startTime: Date.now(),
-                endTime: null
-            };
-        }
-
-        function updateCollectionStats(emailData) {
-            collectionStats.totalEmails++;
-            
-            if (emailData.is_facebook) {
-                collectionStats.facebookEmails++;
-            } else {
-                collectionStats.regularEmails++;
-            }
-            
-            const domain = emailData.email.split('@')[1];
-            if (domain) {
-                collectionStats.uniqueDomains.add(domain);
-            }
-        }
-
-        function showCollectionSummary() {
-            const duration = collectionStats.endTime - collectionStats.startTime;
-            const minutes = Math.floor(duration / 60000);
-            const seconds = Math.floor((duration % 60000) / 1000);
-            
-            const summaryHtml = `
-                <div class="mt-4 p-4 bg-white/10 rounded-lg border border-white/20">
-                    <h3 class="text-white font-bold mb-2">📊 Collection Summary</h3>
-                    <div class="grid grid-cols-2 gap-2 text-sm text-white/80">
-                        <div>Total Emails: <span class="text-white font-medium">${collectionStats.totalEmails}</span></div>
-                        <div>Facebook: <span class="text-white font-medium">${collectionStats.facebookEmails}</span></div>
-                        <div>Regular: <span class="text-white font-medium">${collectionStats.regularEmails}</span></div>
-                        <div>Unique Domains: <span class="text-white font-medium">${collectionStats.uniqueDomains.size}</span></div>
-                        <div class="col-span-2">Duration: <span class="text-white font-medium">${minutes}m ${seconds}s</span></div>
-                    </div>
-                </div>
-            `;
-            
-            const emailList = document.getElementById('emailList');
-            emailList.insertAdjacentHTML('beforeend', summaryHtml);
-        }
-
-        function handleFacebookEmail(emailData) {
-            if (emailData.is_facebook) {
-                console.log('Facebook email detected:', emailData.email);
-            }
         }
 
         function showError(message, type = 'error') {
@@ -1161,148 +324,19 @@
             }, 5000);
         }
 
-        function addTooltips() {
-            const elements = [
-                { id: 'costDisplay', text: 'Cost calculation: Sites × Domains × 10 credits' },
-                { id: 'startCollection', text: 'Ctrl/Cmd + Enter to quick start' },
-                { id: 'emailCount', text: 'Total unique emails found' }
-            ];
-            
-            elements.forEach(({ id, text }) => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.title = text;
-                }
-            });
-        }
-
-        function exportEmailsAsJSON() {
-            const emails = [];
-            document.querySelectorAll('#emailList .bg-white\\/5').forEach(item => {
-                const emailText = item.querySelector('.text-white.font-medium')?.textContent;
-                const sourceText = item.querySelector('.text-white\\/50')?.textContent;
-                
-                if (emailText && sourceText) {
-                    emails.push({
-                        email: emailText,
-                        source: sourceText,
-                        timestamp: new Date().toISOString()
-                    });
-                }
-            });
-            
-            const dataStr = JSON.stringify(emails, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
-            
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `emails_${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-            
-            URL.revokeObjectURL(url);
-        }
-
-        function copyEmailsToClipboard() {
-            const emails = [];
-            document.querySelectorAll('#emailList .bg-white\\/5 .text-white.font-medium').forEach(item => {
-                emails.push(item.textContent);
-            });
-            
-            navigator.clipboard.writeText(emails.join('\n')).then(() => {
-                showError('Emails copied to clipboard! 📋', 'success');
-            }).catch(() => {
-                showError('Failed to copy emails to clipboard', 'error');
-            });
-        }
-
-        function autoSaveProgress() {
-            if (emailCount > 0) {
-                const emails = [];
-                document.querySelectorAll('#emailList .bg-white\\/5').forEach(item => {
-                    const emailText = item.querySelector('.text-white.font-medium')?.textContent;
-                    const sourceText = item.querySelector('.text-white\\/50')?.textContent;
-                    
-                    if (emailText && sourceText) {
-                        emails.push({ email: emailText, source: sourceText });
-                    }
-                });
-                
-                // Store in memory (since localStorage is not available)
-                window.currentSessionEmails = emails;
-                console.log(`Auto-saved ${emails.length} emails to session storage`);
-            }
-        }
-
         // Add keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + Enter to start collection
+            // Ctrl/Cmd + Enter to validate key
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                if (!isCollecting && !document.getElementById('startCollection').disabled) {
-                    startCollection();
-                }
-            }
-            
-            // Escape to stop collection (if running)
-            if (e.key === 'Escape' && isCollecting) {
-                if (confirm('Are you sure you want to stop the collection?')) {
-                    socket.emit('stop_collection');
-                    stopCollection();
-                    hideProgressBar();
-                }
+                validateApiKey();
             }
         });
 
-        // Add context menu for export options
-        document.addEventListener('contextmenu', function(e) {
-            if (e.target.closest('#emailList') && emailCount > 0) {
-                e.preventDefault();
-                
-                const contextMenu = document.createElement('div');
-                contextMenu.className = 'fixed bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-2 z-50 min-w-[150px]';
-                contextMenu.style.left = e.pageX + 'px';
-                contextMenu.style.top = e.pageY + 'px';
-                
-                contextMenu.innerHTML = `
-                    <button class="w-full text-left px-3 py-2 text-gray-800 hover:bg-blue-100 rounded" onclick="exportEmailsAsJSON(); this.parentElement.remove()">
-                        📄 Export as JSON
-                    </button>
-                    <button class="w-full text-left px-3 py-2 text-gray-800 hover:bg-blue-100 rounded" onclick="copyEmailsToClipboard(); this.parentElement.remove()">
-                        📋 Copy to Clipboard
-                    </button>
-                `;
-                
-                document.body.appendChild(contextMenu);
-                
-                // Remove context menu when clicking elsewhere
-                setTimeout(() => {
-                    document.addEventListener('click', function removeMenu(e) {
-                        if (!contextMenu.contains(e.target)) {
-                            contextMenu.remove();
-                            document.removeEventListener('click', removeMenu);
-                        }
-                    });
-                }, 100);
-            }
-        });
-
-        // Auto-save every 30 seconds during collection
-        setInterval(() => {
-            if (isCollecting) {
-                autoSaveProgress();
-            }
-        }, 30000);
-
-        // Console logs for debugging and user tips
-        console.log('🚀 Aurevox Lens initialized successfully!');
+        // Console logs for debugging
+        console.log('🚀 Aurevox Lens Authentication Page initialized successfully!');
         console.log('💡 Tips:');
-        console.log('  • Use Ctrl/Cmd + Enter to quick start collection');
-        console.log('  • Press Escape to stop ongoing collection');
-        console.log('  • Right-click on results for export options');
-        console.log('  • All checkboxes start unchecked as requested');
-        console.log('  • Real-time cost calculation updates automatically');
-        console.log('  • Click "Lookup" on Facebook emails for detailed info');
-        console.log('  • Add custom domains using the purple-colored custom domain field');
+        console.log('  • Use Ctrl/Cmd + Enter to quick authenticate');
+        console.log('  • Direct access available via URL parameter: ?key=YOUR_API_KEY');
     </script>
 </body>
 </html>
