@@ -1,6 +1,6 @@
 import eventlet
 eventlet.monkey_patch()
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory, redirect, url_for
 from flask_socketio import SocketIO, emit
 import urllib.parse
 import requests
@@ -160,6 +160,70 @@ def add_key_to_database(key):
         logger.error(f"Exception in add_key_to_database: {str(e)}")
         logger.error(traceback.format_exc())
         return False
+
+# ------------------ Key Validation Helper ------------------
+
+def validate_api_key(key):
+    """
+    Validates an API key and returns user data if valid.
+    Returns tuple: (is_valid, user_data, error_message)
+    """
+    try:
+        if not key:
+            return False, None, "No API key provided"
+            
+        logger.debug(f"Validating key: {key[:10]}...")
+        
+        # First check if key exists in database
+        entry = get_key_entry(key)
+
+        # If not found in database, try Gumroad verification
+        if not entry:
+            logger.info(f"Key not found in database, checking Gumroad: {key[:10]}...")
+            if verify_gumroad_license(key):
+                # Add key to database
+                if add_key_to_database(key):
+                    # Try to get the entry again
+                    entry = get_key_entry(key)
+                    if not entry:
+                        return False, None, "Authentication failed"
+                else:
+                    return False, None, "Authentication failed"
+            else:
+                return False, None, "Invalid API key"
+
+        # Check expiration
+        exp = entry.get("expiration_date")
+        expired = False
+        formatted_exp = "No Expiration Date"
+
+        if exp:
+            try:
+                exp_date = datetime.strptime(exp, "%d-%m-%Y")
+                formatted_exp = exp_date.strftime("%d %B %Y")
+                if datetime.now() > exp_date:
+                    expired = True
+                    return False, None, f"API key expired on {formatted_exp}"
+            except Exception as date_error:
+                logger.error(f"Date parsing error for key {key[:10]}...: {str(date_error)}")
+                return False, None, "Invalid expiration date format"
+
+        user_data = {
+            "valid": True,
+            "username": entry.get("username"),
+            "credit": int(entry.get("credit", 0)),
+            "expiration_date": formatted_exp,
+            "expired": expired,
+            "scrapedo_token": entry.get("scrapedo_token")
+        }
+        
+        logger.info(f"Key validation successful for user: {user_data['username']} (credits: {user_data['credit']})")
+        return True, user_data, None
+        
+    except Exception as e:
+        logger.error(f"Exception in validate_api_key: {str(e)}")
+        logger.error(traceback.format_exc())
+        return False, None, "Authentication failed"
 
 # ------------------ Local Key Handling ------------------
 
@@ -454,8 +518,81 @@ def get_facebook_page_data(fb_url):
 
 @app.route("/")
 def index():
-    logger.info("Serving index page")
-    return render_template("index.html", portals=PORTALS, domains=EMAIL_DOMAINS)
+    """
+    Main route that handles both authentication page and direct URL access.
+    If 'key' parameter is provided in URL, validates it and redirects to collection page.
+    """
+    try:
+        logger.info("Index route accessed")
+        
+        # Check if API key is provided as URL parameter
+        api_key = request.args.get('key')
+        
+        if api_key:
+            logger.info(f"Direct access attempted with URL key: {api_key[:10]}...")
+            
+            # Validate the API key
+            is_valid, user_data, error_message = validate_api_key(api_key)
+            
+            if is_valid:
+                logger.info(f"URL key validation successful for user: {user_data['username']}")
+                # Redirect to collection page with key as parameter
+                return redirect(url_for('collection', key=api_key))
+            else:
+                logger.warning(f"URL key validation failed: {error_message}")
+                # Redirect to main page with error message
+                return render_template("index.html", 
+                                     portals=PORTALS, 
+                                     domains=EMAIL_DOMAINS,
+                                     error_message=f"Authentication failed: {error_message}")
+        
+        # Normal access - show authentication page
+        logger.info("Normal access - serving authentication page")
+        return render_template("index.html", portals=PORTALS, domains=EMAIL_DOMAINS)
+        
+    except Exception as e:
+        logger.error(f"Exception in index route: {str(e)}")
+        logger.error(traceback.format_exc())
+        return render_template("index.html", 
+                             portals=PORTALS, 
+                             domains=EMAIL_DOMAINS,
+                             error_message="An error occurred. Please try again.")
+
+@app.route("/collection")
+def collection():
+    """
+    Collection page that requires a valid API key as URL parameter.
+    """
+    try:
+        logger.info("Collection page accessed")
+        
+        # Get API key from URL parameter
+        api_key = request.args.get('key')
+        
+        if not api_key:
+            logger.warning("Collection page accessed without API key - redirecting to main page")
+            return redirect(url_for('index'))
+        
+        # Validate the API key
+        is_valid, user_data, error_message = validate_api_key(api_key)
+        
+        if not is_valid:
+            logger.warning(f"Invalid key used to access collection page: {error_message}")
+            return redirect(url_for('index'))
+        
+        logger.info(f"Collection page access granted for user: {user_data['username']}")
+        
+        # Render collection page with user data and pre-filled key
+        return render_template("collection.html", 
+                             portals=PORTALS, 
+                             domains=EMAIL_DOMAINS,
+                             user_data=user_data,
+                             api_key=api_key)
+        
+    except Exception as e:
+        logger.error(f"Exception in collection route: {str(e)}")
+        logger.error(traceback.format_exc())
+        return redirect(url_for('index'))
 
 @app.route("/download/<filename>")
 def download(filename):
@@ -481,57 +618,13 @@ def check_key():
             logger.error("No key provided in request")
             return jsonify({"valid": False, "error": "No key provided"}), 400
             
-        logger.debug(f"Checking key: {key[:10]}...")
+        # Use the new validation helper
+        is_valid, user_data, error_message = validate_api_key(key)
         
-        # First check if key exists in database
-        entry = get_key_entry(key)
-
-        # If not found in database, try Gumroad verification
-        if not entry:
-            logger.info(f"Key not found in database, checking Gumroad: {key[:10]}...")
-            if verify_gumroad_license(key):
-                # Add key to database
-                if add_key_to_database(key):
-                    # Try to get the entry again
-                    entry = get_key_entry(key)
-                    if not entry:
-                        logger.error("Failed to retrieve newly added Gumroad key")
-                        return jsonify({"valid": False, "error": "Authentication failed"})
-                else:
-                    logger.error("Failed to add Gumroad key to database")
-                    return jsonify({"valid": False, "error": "Authentication failed"})
-            else:
-                logger.warning(f"Invalid key attempted: {key[:10]}...")
-                return jsonify({"valid": False, "error": "Invalid key"})
-
-        # Check expiration
-        exp = entry.get("expiration_date")
-        expired = False
-        formatted_exp = "No Expiration Date"
-
-        if exp:
-            try:
-                exp_date = datetime.strptime(exp, "%d-%m-%Y")
-                formatted_exp = exp_date.strftime("%d %B %Y")
-                if datetime.now() > exp_date:
-                    expired = True
-                    logger.warning(f"Expired key used: {key[:10]}... (expired: {formatted_exp})")
-            except Exception as date_error:
-                logger.error(f"Date parsing error for key {key[:10]}...: {str(date_error)}")
-                expired = True
-                formatted_exp = "Invalid date format"
-
-        response_data = {
-            "valid": True,
-            "username": entry.get("username"),
-            "credit": int(entry.get("credit", 0)),
-            "expiration_date": formatted_exp,
-            "expired": expired,
-            "scrapedo_token": entry.get("scrapedo_token")
-        }
-        
-        logger.info(f"Key check successful for user: {response_data['username']} (credits: {response_data['credit']})")
-        return jsonify(response_data)
+        if is_valid:
+            return jsonify(user_data)
+        else:
+            return jsonify({"valid": False, "error": error_message})
         
     except Exception as e:
         logger.error(f"Exception in check_key: {str(e)}")
