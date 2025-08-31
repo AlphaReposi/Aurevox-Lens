@@ -35,9 +35,10 @@ socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=
 # Constants
 SAVE_DIR = "collected"
 DATA_FILE = "data.json"
-BIN_ID = '680913818960c979a58b8802'  # Replace with your JSON bin ID
-SECRET_KEY = '$2a$10$IdifnmBdofbYRqPOOyN6ruvDS5Dm0idObfpQi5lbgPqxxnWOaw4wm'  # Replace with your JSON bin master key
+BIN_ID = '68b33ccb43b1c97be93119ec'  # Replace with your JSON bin ID
+SECRET_KEY = '$2a$10$rcJymoNUyCZ8j2uVTer40.s6xbsF8afkGgRuAr8U5yAcM2arGnjBO'  # Replace with your JSON bin master key
 GUMROAD_PRODUCT_ID = '5ldD5GrO69z9HuDNM0jG_A=='
+SCRAPEDO_TOKEN = '6787010ab6634fe0889a43a776c0de54c1f2d7dfd41' #using arevoxlens@gmail.com
 
 # JSONBin API URL
 BASE_URL = f'https://api.jsonbin.io/v3/b/{BIN_ID}'
@@ -143,7 +144,7 @@ def add_key_to_database(key):
             "username": f"gumroad_user_{key[:8]}",
             "credit": 1000,  # Default credits for new Gumroad users
             "expiration_date": None,  # No expiration for Gumroad users
-            "scrapedo_token": "06323a5daf6443fd8d6adeda0fa328b8352cf3ccd1a",  # Default token
+            "scrapedo_token": SCRAPEDO_TOKEN,  # Default token
             "source": "gumroad"
         }
         
@@ -708,7 +709,7 @@ def handle_start_collection(data):
 
         if not user_token:
             error_msg = "Authentication error"
-            logger.error("No ScrapeDo token found for this key")
+            logger.error("No valid SD token found for this key")
             emit("error", {"message": error_msg})
             return
 
