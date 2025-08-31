@@ -302,7 +302,7 @@ def get_data_v2(url, token):
         logger.debug(f"Scraping URL: {url[:100]}...")
         cl = requests.session()
         target_url = urllib.parse.quote(url)
-        wrapped_url = f"http://api.scrape.do/?token={token}&url={target_url}"
+        wrapped_url = f"http://api.scrape.do/?token={token}&url={target_url}&geoCode=us"
         
         logger.debug(f"Using scrape.do URL: {wrapped_url[:100]}...")
         response = cl.get(wrapped_url, timeout=30)
