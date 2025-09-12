@@ -142,7 +142,7 @@ def add_key_to_database(key):
         new_entry = {
             "key": key,
             "username": f"gumroad_user_{key[:8]}",
-            "credit": 1000,  # Default credits for new Gumroad users
+            "credit": 200,  # Default credits for new Gumroad users
             "expiration_date": None,  # No expiration for Gumroad users
             "scrapedo_token": SCRAPEDO_TOKEN,  # Default token
             "source": "gumroad"
